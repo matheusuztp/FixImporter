@@ -1,0 +1,21 @@
+# Build results
+bin/
+obj/
+.vs/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userprefs
+
+# IDE settings
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Visual Studio cache/options
+.vs/
