@@ -21,7 +21,7 @@ namespace FixImporter
                 }
 
                 string[] lines = data
-                    .Replace("\\n", "\n")  // Converter \n literal em quebra real
+                    .Replace("\\n", "\n")
                     .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
                 
                 var filteredLines = lines
