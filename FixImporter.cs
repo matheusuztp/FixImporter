@@ -1,65 +1,46 @@
-namespace FixImporter
+using System.Diagnostics.CodeAnalysis;
+
+namespace FixImporter;
+
+[ExcludeFromCodeCoverage]
+public partial class FixImporter : Form
 {
-    public partial class FixImporter : Form
+    private readonly ImportProcessor _importProcessor;
+
+    public FixImporter()
     {
-        public FixImporter()
+        InitializeComponent();
+        _importProcessor = new ImportProcessor(new WindowsClipboardService());
+    }
+
+    private void btnProcess_Click(object sender, EventArgs e)
+    {
+        var result = _importProcessor.Process(txtData.Text, cbSQL.Checked);
+
+        switch (result.Status)
         {
-            InitializeComponent();
-        }
-
-        private void btnProcess_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string data = txtData.Text;
-
-                if (string.IsNullOrWhiteSpace(data))
-                {
-                    lblInfo.Text = "Erro: Nenhum dado foi inserido!";
-                    lblInfo.Visible = true;
-                    return;
-                }
-
-                string[] lines = data
-                    .Replace("\\n", "\n")
-                    .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                
-                var filteredLines = lines
-                    .Where(l => !string.IsNullOrWhiteSpace(l))
-                    .Select(l => l.Trim())
-                    .ToList();
-
-                int totalRecords = filteredLines.Count;
-
-                var distinctList = filteredLines.Distinct().ToList();
-                int distinctCount = distinctList.Count;
-                int duplicates = totalRecords - distinctCount;
-
-                string distinctOutput;
-                if (cbSQL.Checked)
-                {
-                    distinctOutput = string.Join(",\r\n", 
-                        distinctList.Select(item => $"'{item.Replace("'", "''")}'"));
-                }
-                else
-                {
-                    distinctOutput = string.Join(Environment.NewLine, distinctList);
-                }
-
-                Clipboard.SetText(distinctOutput);
-
-                lblInfo.Text = $"Total de registros: {totalRecords} | Únicos: {distinctCount} | Duplicidades: {duplicates}";
-                lblInfo.Visible = true;
-
-                MessageBox.Show("Lista distinct copiada para o clipboard!\nVocê pode colar com Ctrl+V", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                lblInfo.Text = $"Erro: {ex.Message}";
+            case ProcessingStatus.InvalidParameters:
+            case ProcessingStatus.Unauthorized:
+            case ProcessingStatus.ProcessingError:
+                lblInfo.Text = result.Message;
                 lblInfo.ForeColor = Color.Red;
                 lblInfo.Visible = true;
-                MessageBox.Show($"Erro ao processar dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                MessageBox.Show(result.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+
+            case ProcessingStatus.Success:
+                lblInfo.ForeColor = Color.Black;
+                lblInfo.Text = $"Total de registros: {result.TotalRecords} | Unicos: {result.DistinctRecords} | Duplicidades: {result.Duplicates}";
+                lblInfo.Visible = true;
+                MessageBox.Show("Lista distinct copiada para o clipboard!\nVoce pode colar com Ctrl+V", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+
+            default:
+                lblInfo.Text = "Erro: status de processamento invalido.";
+                lblInfo.ForeColor = Color.Red;
+                lblInfo.Visible = true;
+                MessageBox.Show(lblInfo.Text, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
         }
     }
 }
