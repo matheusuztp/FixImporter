@@ -3,6 +3,11 @@ bin/
 obj/
 .vs/
 
+# Test artifacts
+TestResults/
+**/TestResults/
+coverage/
+
 # User-specific files
 *.user
 *.rsuser

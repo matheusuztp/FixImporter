@@ -1,4 +1,5 @@
 using Bogus;
+using FixImporter.Core;
 
 namespace FixImporter.Tests;
 
