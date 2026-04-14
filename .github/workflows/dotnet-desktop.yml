@@ -39,3 +39,13 @@ jobs:
         run: dotnet test $env:TEST_PROJECT_PATH --configuration $env:CONFIGURATION --no-build --verbosity normal
         env:
           CONFIGURATION: ${{ matrix.configuration }}
+
+  docker-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t fiximporter:ci .

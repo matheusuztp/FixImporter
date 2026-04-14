@@ -9,9 +9,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="FixImporter.Core\FixImporter.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="FixImporter.Tests\**\*.cs" />
+    <Compile Remove="FixImporter.Core\**\*.cs" />
+    <Compile Remove="FixImporter.Cli\**\*.cs" />
     <EmbeddedResource Remove="FixImporter.Tests\**\*" />
+    <EmbeddedResource Remove="FixImporter.Core\**\*" />
+    <EmbeddedResource Remove="FixImporter.Cli\**\*" />
     <None Remove="FixImporter.Tests\**\*" />
+    <None Remove="FixImporter.Core\**\*" />
+    <None Remove="FixImporter.Cli\**\*" />
   </ItemGroup>
 
 </Project>

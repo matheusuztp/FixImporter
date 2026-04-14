@@ -1,6 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
-
-namespace FixImporter;
+namespace FixImporter.Core;
 
 public enum ProcessingStatus
 {
@@ -23,15 +21,6 @@ public sealed class ProcessResult
 public interface IClipboardService
 {
     void SetText(string value);
-}
-
-[ExcludeFromCodeCoverage]
-public sealed class WindowsClipboardService : IClipboardService
-{
-    public void SetText(string value)
-    {
-        Clipboard.SetText(value);
-    }
 }
 
 public sealed class ImportProcessor
