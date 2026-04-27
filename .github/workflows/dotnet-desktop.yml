@@ -49,3 +49,13 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t fiximporter:ci .
+
+  discord:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Discord Webhook Action
+      uses: tsickert/discord-webhook@v7.0.0
+      with:
+        webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+        content: "Test"
+
