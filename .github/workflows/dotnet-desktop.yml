@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 jobs:
-  build-and-test:
+  build:
     runs-on: windows-latest
 
     strategy:
@@ -16,7 +16,6 @@ jobs:
 
     env:
       SOLUTION_PATH: FixImporter.sln
-      TEST_PROJECT_PATH: FixImporter.Tests/FixImporter.Tests.csproj
 
     steps:
       - name: Checkout
@@ -35,8 +34,28 @@ jobs:
         env:
           CONFIGURATION: ${{ matrix.configuration }}
 
-      - name: Test
-        run: dotnet test $env:TEST_PROJECT_PATH --configuration $env:CONFIGURATION --no-build --verbosity normal
+  unit-tests:
+    runs-on: windows-latest
+    needs: build
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    env:
+      TEST_PROJECT_PATH: FixImporter.Tests/FixImporter.Tests.csproj
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Run unit tests
+        run: dotnet test $env:TEST_PROJECT_PATH --configuration $env:CONFIGURATION --verbosity normal
         env:
           CONFIGURATION: ${{ matrix.configuration }}
 
